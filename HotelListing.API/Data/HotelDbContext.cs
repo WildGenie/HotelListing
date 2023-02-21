@@ -16,7 +16,7 @@ public class HotelDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         
-        modelBuilder.Entity<Country>().HasData(
+       /* modelBuilder.Entity<Country>().HasData(
                 new Country
                 {
                     Id = 1,
@@ -61,6 +61,6 @@ public class HotelDbContext : DbContext
                     CountryId = 3,
                     Rating = 4.4
                 }
-            );
+            );*/
     }
 }

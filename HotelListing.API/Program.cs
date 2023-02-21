@@ -3,6 +3,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Diagnostics;
+using HotelListing.API.Configurations;
+using System.Text.Json.Serialization;
+using HotelListing.API.Interfaces;
+using HotelListing.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +19,7 @@ builder.Services.AddDbContext<HotelDbContext>(options => {
 
 // Add services to the container.
 builder.Services.AddControllers();
+    //.AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -32,7 +37,7 @@ builder.Services.AddCors(options =>
 });
 
 /* LOGGING SERILOG & SEQ 
---------------------------------------*/
+-----------------------*/
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.Configuration(ctx.Configuration));
 
 /*Log.Logger = new LoggerConfiguration()
@@ -42,6 +47,12 @@ builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.Configuration
 
 Serilog.Debugging.SelfLog.Enable(Console.Error);
 
+/* AUTO MAPPER CONFIGURATION
+------------------------------------*/
+builder.Services.AddAutoMapper(typeof(MapperConfig));
+
+builder.Services.AddScoped(typeof(MapperConfig));
+builder.Services.AddScoped<ICountriesRepo, CountryRepo>();
 
 var app = builder.Build();
 
