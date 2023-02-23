@@ -53,6 +53,7 @@ builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 builder.Services.AddScoped(typeof(MapperConfig));
 builder.Services.AddScoped<ICountriesRepo, CountryRepo>();
+builder.Services.AddScoped<IHotelsRepo, HotelRepo>();
 
 var app = builder.Build();
 

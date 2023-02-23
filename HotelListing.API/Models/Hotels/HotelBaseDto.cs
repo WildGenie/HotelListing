@@ -2,10 +2,10 @@
 
 namespace HotelListing.API.Models.Hotels;
 
-public class HotelBaseDto
+public abstract class HotelBaseDto
 {
     [Required]
     public string Name { get; set; }
+    [Required]
     public int CountryId { get; set; }
-    public string Country { get; set; }
 }

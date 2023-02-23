@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelListing.API.Data;
-using HotelListing.API.Models.Hotels;
 using AutoMapper;
 using HotelListing.API.Interfaces;
+using HotelListing.API.Models.Hotels;
 
 namespace HotelListing.API.Controllers;
 
@@ -14,10 +19,7 @@ public class HotelsController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IHotelsRepo _hotelsRepo;
 
-    public HotelsController(
-        IMapper mapper,
-        IHotelsRepo hotelsRepo 
-        )
+    public HotelsController(IMapper mapper, IHotelsRepo hotelsRepo)
     {
         _mapper = mapper;
         _hotelsRepo = hotelsRepo;
@@ -25,53 +27,49 @@ public class HotelsController : ControllerBase
 
     // GET: api/Hotels
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<HotelGetDto>>> GetHotels()
+    public async Task<ActionResult<IEnumerable<HotelDto>>> GetHotels()
     {
         var hotels = await _hotelsRepo.GetAllAsync();
         
-        var records = _mapper.Map<List<HotelGetDto>>(hotels);
-        
-        return Ok(records); 
+        return Ok(_mapper.Map<List<HotelDto>>(hotels));
     }
 
     // GET: api/Hotels/5
     [HttpGet("{id}")]
     public async Task<ActionResult<HotelDto>> GetHotel(int id)
     {
-        var hotel = await _hotelsRepo.GetDetails(id);
+        var hotel = await _hotelsRepo.GetAsync(id);
 
         if (hotel == null)
         {
             return NotFound();
         }
 
-        var hotelDto = _mapper.Map<HotelDto>(hotel);
-
-        return Ok(hotelDto);
+        return Ok(_mapper.Map<HotelDto>(hotel));
     }
 
     // PUT: api/Hotels/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutHotel(int id, HotelGetDto hotelGetDto)
+    public async Task<IActionResult> PutHotel(int id, HotelDto hotelDto)
     {
-        if (id != hotelGetDto.Id)
+        if (id != hotelDto.Id)
         {
-            return BadRequest("Invalid Record Id");
+            return BadRequest();
         }
 
-        //_context.Entry(hotel).State = EntityState.Modified;
-        ///////////////////////////////////////////////////////
+        //_hotelsRepo.Entry(hotel).State = EntityState.Modified;
+        ////////////////////////////////////////////////////////
         
         var hotel = await _hotelsRepo.GetAsync(id);
-        
-        if (hotel == null)
+
+        if(hotel == null)
         {
             return NotFound();
         }
 
-        _mapper.Map(hotelGetDto, hotel);
-
+        _mapper.Map(hotelDto, hotel);
+        
         try
         {
             await _hotelsRepo.UpdateAsync(hotel);
@@ -99,7 +97,7 @@ public class HotelsController : ControllerBase
         var hotel = _mapper.Map<Hotel>(hotelCreateDto);
 
         await _hotelsRepo.AddAsync(hotel);
-        
+
         return CreatedAtAction("GetHotel", new { id = hotel.Id }, hotel);
     }
 
@@ -108,6 +106,7 @@ public class HotelsController : ControllerBase
     public async Task<IActionResult> DeleteHotel(int id)
     {
         var hotel = await _hotelsRepo.GetAsync(id);
+        
         if (hotel == null)
         {
             return NotFound();
