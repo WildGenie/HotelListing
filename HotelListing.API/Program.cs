@@ -7,6 +7,7 @@ using HotelListing.API.Configurations;
 using System.Text.Json.Serialization;
 using HotelListing.API.Interfaces;
 using HotelListing.API.Repository;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,12 @@ var connectionString = builder.Configuration.GetConnectionString("HotelAPIDbStri
 builder.Services.AddDbContext<HotelDbContext>(options => {
     options.UseSqlServer(connectionString);
 });
+
+/* CONFIGURING IDENTITY CORE
+--------------------------*/
+builder.Services.AddIdentityCore<User>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<HotelDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllers();
