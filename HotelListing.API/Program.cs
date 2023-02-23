@@ -1,13 +1,13 @@
 using HotelListing.API.Data;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Diagnostics;
 using HotelListing.API.Configurations;
-using System.Text.Json.Serialization;
 using HotelListing.API.Interfaces;
 using HotelListing.API.Repository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +22,8 @@ builder.Services.AddDbContext<HotelDbContext>(options => {
 --------------------------*/
 builder.Services.AddIdentityCore<User>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<HotelDbContext>();
+    .AddTokenProvider<DataProtectorTokenProvider<User>>("HotelListing")
+    .AddEntityFrameworkStores<HotelDbContext>().AddDefaultTokenProviders();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -52,15 +53,38 @@ builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.Configuration
     .WriteTo.Seq("http://localhost:5341")
     .CreateLogger();*/
 
-//Serilog.Debugging.SelfLog.Enable(Console.Error);
+//Serilog.Debugging.SelfLog.Enable(Console.Error); // IF IN USE SCAFFOLD ERROR!!!
 
 /* AUTO MAPPER CONFIGURATION
-------------------------------------*/
+--------------------------*/
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 builder.Services.AddScoped(typeof(MapperConfig));
 builder.Services.AddScoped<ICountriesRepo, CountryRepo>();
 builder.Services.AddScoped<IHotelsRepo, HotelRepo>();
+builder.Services.AddScoped<IAuthRepo, AuthRepo>();
+
+/* JWT AUTHENTICATION TOKEN
+-------------------------*/
+builder.Services.AddAuthentication(jwt =>
+{
+    jwt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    jwt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(jwt =>
+    {
+        jwt.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+        };
+    });
 
 var app = builder.Build();
 
@@ -78,6 +102,8 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
