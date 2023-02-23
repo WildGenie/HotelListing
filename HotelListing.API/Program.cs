@@ -45,7 +45,7 @@ builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.Configuration
     .WriteTo.Seq("http://localhost:5341")
     .CreateLogger();*/
 
-Serilog.Debugging.SelfLog.Enable(Console.Error);
+//Serilog.Debugging.SelfLog.Enable(Console.Error);
 
 /* AUTO MAPPER CONFIGURATION
 ------------------------------------*/
