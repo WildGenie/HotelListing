@@ -109,6 +109,14 @@ builder.Services.AddAuthentication(jwt =>
         };
     });
 
+/* RESPONSE CACHING
+-----------------*/
+builder.Services.AddResponseCaching(cach =>
+{
+    cach.MaximumBodySize = 1024;
+    cach.UseCaseSensitivePaths = true;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -129,6 +137,24 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
+
+/* CACHING (ADD BEHIND CORS)
+--------*/
+app.UseResponseCaching();
+app.Use(async (context, next) =>
+{
+    context.Response.GetTypedHeaders().CacheControl =
+    new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+    {
+        Public = true,
+        MaxAge = TimeSpan.FromSeconds(10)
+    };
+
+    context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
+    new string[] { "Accept-Encoding" };
+
+    await next();
+});
 
 /* ADDING AUTHENTICATION
 ----------------------*/
