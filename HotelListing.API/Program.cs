@@ -11,6 +11,7 @@ using System.Text;
 using HotelListing.API.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.OData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +29,6 @@ builder.Services.AddIdentityCore<User>()
     .AddTokenProvider<DataProtectorTokenProvider<User>>("HotelListing")
     .AddEntityFrameworkStores<HotelDbContext>().AddDefaultTokenProviders();
 
-// Add services to the container.
-builder.Services.AddControllers();
-    //.AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -116,6 +114,13 @@ builder.Services.AddResponseCaching(cach =>
     cach.MaximumBodySize = 1024;
     cach.UseCaseSensitivePaths = true;
 });
+
+// Add services to the container.
+builder.Services.AddControllers().AddOData(data =>
+{
+    data.Select().Filter().OrderBy();
+});
+//.AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 var app = builder.Build();
 
