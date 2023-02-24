@@ -11,10 +11,12 @@ namespace HotelListing.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepo _authRepo;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthRepo authRepo)
+        public AuthController(IAuthRepo authRepo, ILogger<AuthController> logger)
         {
             _authRepo = authRepo;
+            _logger = logger;
         }
 
         //POST: api/Auth/register
@@ -25,6 +27,8 @@ namespace HotelListing.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Register([FromBody] UserDto userDto)
         {
+            _logger.LogInformation($"Registration of {userDto.Email}");
+            
             var errors = await _authRepo.Register(userDto);
 
             if (errors.Any()) 
@@ -48,10 +52,13 @@ namespace HotelListing.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Login([FromBody] UserLoginDto userLoginDto)
         {
+            _logger.LogInformation($"LOGIN: {userLoginDto.Email}");
+
             var userAuth = await _authRepo.Login(userLoginDto);
 
             if (userAuth is null)
             {
+                _logger.LogWarning($"UNAUTHORIZED LOGIN ATTEMPT ON {userLoginDto.Email}");
                 return Unauthorized();
             }
 

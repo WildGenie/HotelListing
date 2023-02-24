@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using HotelListing.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,6 +96,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+/* GLOBAL EXCEPTION HANDELING 
+---------------------------*/
+app.UseMiddleware<ExceptionMiddleware>(); 
+
 /* REQUEST LOGGING
 --------------------------------------*/
 app.UseSerilogRequestLogging();
@@ -103,6 +108,8 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
+/* ADDING AUTHENTICATION
+----------------------*/
 app.UseAuthentication();
 
 app.UseAuthorization();

@@ -16,17 +16,24 @@ public class AuthRepo : IAuthRepo
     private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
-
+    private readonly ILogger _logger;
+    
     private User _user;
 
     private const string _loginProvider = "HotelListing";
     private const string _refreshToken = "RefreshToken";
 
-    public AuthRepo(IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
+    public AuthRepo(
+        IMapper mapper, 
+        UserManager<User> userManager, 
+        IConfiguration configuration,
+        ILogger logger
+        )
     {
         _mapper = mapper;
         _userManager = userManager;
         _configuration = configuration;
+        _logger = logger;
     }
 
     public async Task<string> CreateRefreshToken()
@@ -75,20 +82,25 @@ public class AuthRepo : IAuthRepo
 
     public async Task<UserAuthDto> Login(UserLoginDto userLoginDto)
     {
+        _logger.LogInformation($"LOGIN ATTEMPT: {userLoginDto.Email}");
+
         _user = await _userManager.FindByEmailAsync(userLoginDto.Email);
         bool isValidCheck = await _userManager.CheckPasswordAsync(_user, userLoginDto.Password);
 
         if (_user is null || !isValidCheck)
         {
+            _logger.LogWarning($"LOGIN ATTEMPT FAILED: {userLoginDto.Email}");
             return null;
         }
 
         var token = await GenerateToken();
+        _logger.LogInformation($"GENERATED TOKEN: {token} FOR: {userLoginDto.Email}");
 
         return new UserAuthDto
         {
             Token = token,
-            UserId = _user.Id
+            UserId = _user.Id,
+            RefreshToken = await CreateRefreshToken()
         };
     }
 

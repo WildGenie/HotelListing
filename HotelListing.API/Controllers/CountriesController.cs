@@ -14,14 +14,17 @@ public class CountriesController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly ICountriesRepo _countriesRepo;
+    private readonly ILogger _logger;
 
     public CountriesController(
         IMapper mapper,
-        ICountriesRepo countriesRepo
+        ICountriesRepo countriesRepo,
+        ILogger logger
         )
     {
         _mapper = mapper;
         _countriesRepo = countriesRepo;
+        _logger = logger;
     }
 
     // GET: api/Countries
@@ -43,6 +46,7 @@ public class CountriesController : ControllerBase
 
         if (country == null)
         {
+            _logger.LogWarning($"NO RECORD FOUND {nameof(GetCountry)} - ID:{id}");
             return NotFound();
         }
 
