@@ -1,4 +1,5 @@
-﻿using HotelListing.API.Data;
+﻿using AutoMapper;
+using HotelListing.API.Data;
 using HotelListing.API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ public class CountryRepo : GenericRepo<Country>, ICountriesRepo
 {
     private readonly HotelDbContext _context;
 
-    public CountryRepo(HotelDbContext context) : base(context)
+    public CountryRepo(HotelDbContext context, IMapper mapper) : base(context, mapper)
     {
         _context = context;
     }
