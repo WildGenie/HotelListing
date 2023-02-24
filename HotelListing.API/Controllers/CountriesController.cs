@@ -14,12 +14,12 @@ public class CountriesController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly ICountriesRepo _countriesRepo;
-    private readonly ILogger _logger;
+    private readonly ILogger<CountriesController> _logger;
 
     public CountriesController(
         IMapper mapper,
         ICountriesRepo countriesRepo,
-        ILogger logger
+        ILogger<CountriesController> logger
         )
     {
         _mapper = mapper;

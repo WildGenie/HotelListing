@@ -16,7 +16,7 @@ public class AuthRepo : IAuthRepo
     private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
-    private readonly ILogger _logger;
+    private readonly ILogger<AuthRepo> _logger;
     
     private User _user;
 
@@ -27,7 +27,7 @@ public class AuthRepo : IAuthRepo
         IMapper mapper, 
         UserManager<User> userManager, 
         IConfiguration configuration,
-        ILogger logger
+        ILogger<AuthRepo> logger
         )
     {
         _mapper = mapper;

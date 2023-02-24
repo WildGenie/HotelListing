@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HotelListing.API.Middleware;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +45,26 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader()
         .AllowAnyOrigin()
         .AllowAnyMethod());
+});
+
+/* IMPLEMENTING API VERSIONING
+----------------------------*/
+builder.Services.AddApiVersioning(version =>
+{
+    version.AssumeDefaultVersionWhenUnspecified = true;
+    version.DefaultApiVersion = new ApiVersion(1, 0);
+    version.ReportApiVersions = true;
+    version.ApiVersionReader = ApiVersionReader.Combine(
+        new QueryStringApiVersionReader("api-version"),
+        new HeaderApiVersionReader("X-version"),
+        new MediaTypeApiVersionReader("ver")
+        );
+});
+
+builder.Services.AddVersionedApiExplorer(exploder =>
+{
+    exploder.GroupNameFormat = "'v'VVV";
+    exploder.SubstituteApiVersionInUrl = true;
 });
 
 /* LOGGING SERILOG & SEQ 
