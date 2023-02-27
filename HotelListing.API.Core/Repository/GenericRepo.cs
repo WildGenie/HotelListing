@@ -19,13 +19,14 @@ public class GenericRepo<T> : IGenericRepo<T> where T : class
         _context = context;
         _mapper = mapper;
     }
-    /*public async Task<T> AddAsync(T entity)
+
+    public async Task<T> AddAsync(T entity)
     {
         await _context.AddAsync(entity);
         await _context.SaveChangesAsync();
 
         return entity;
-    }*/
+    }
 
     public async Task<TResult> AddAsync<TSource, TResult>(TSource source)
     {
@@ -37,10 +38,10 @@ public class GenericRepo<T> : IGenericRepo<T> where T : class
         return _mapper.Map<TResult>(entity);
     }
 
-    /*public async Task<List<T>> GetAllAsync()
+    public async Task<List<T>> GetAllAsync()
     {
-        return await _context.Set<T>().ToListAsync(); 
-    }*/
+        return await _context.Set<T>().ToListAsync();
+    }
 
     public async Task<List<TResult>> GetAllAsync<TResult>()
     {
@@ -67,15 +68,15 @@ public class GenericRepo<T> : IGenericRepo<T> where T : class
         };
     }
 
-    /*public async Task<T> GetAsync(int? id)
+    public async Task<T> GetAsync(int? id)
     {
-        if(id is null)
+        if (id is null)
         {
             return null;
         }
-        
+
         return await _context.Set<T>().FindAsync(id);
-    }*/
+    }
 
     public async Task<TResult> GetAsync<TResult>(int? id)
     {
@@ -86,11 +87,11 @@ public class GenericRepo<T> : IGenericRepo<T> where T : class
             : _mapper.Map<TResult>(results);
     }
 
-    /*public async Task UpdateAsync(T entity)
+    public async Task UpdateAsync(T entity)
     {
         _context.Update(entity);
         await _context.SaveChangesAsync();
-    }*/
+    }
 
     public async Task UpdateAsync<TSource>(int id, TSource source)
     {

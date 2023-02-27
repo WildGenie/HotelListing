@@ -1,4 +1,5 @@
 ﻿using HotelListing.API.Data;
+using HotelListing.API.Models.Hotels;
 
 namespace HotelListing.API.Interfaces;
 
