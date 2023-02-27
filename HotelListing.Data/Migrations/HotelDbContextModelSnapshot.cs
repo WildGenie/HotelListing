@@ -31,9 +31,11 @@ namespace HotelListing.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CountryCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -70,12 +72,14 @@ namespace HotelListing.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Adress")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CountryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Rating")
@@ -130,6 +134,7 @@ namespace HotelListing.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -140,9 +145,11 @@ namespace HotelListing.API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -196,7 +203,8 @@ namespace HotelListing.API.Migrations
                             Id = "62b3adbb-e3a7-4f5f-8a05-61d2074df6c2",
                             AccessFailedCount = 0,
                             Age = 0,
-                            ConcurrencyStamp = "ae3655f0-35a6-4b52-a2aa-ecc689e3bd4c",
+                            ConcurrencyStamp = "de44877d-d966-425e-8223-0265dc6747a5",
+                            Country = "Netherlands",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "System",
@@ -204,9 +212,9 @@ namespace HotelListing.API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPz4UKto+/VWOpoyuujDFUpZ3Xy7tYl7VnTqORtO5GC41XMgs6vOxl/s6ItN7lq1OQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEryOJOtXi9ndTD1a5v+rZPe9DszV1Nyk19BgQVaWfKqUgz3JIAizFmbMPrNVAiUyg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0df6d234-87dc-42b9-b542-ddc50b9a6ca6",
+                            SecurityStamp = "7278e6b4-5b40-484f-9de2-69b7eb5c20a7",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -215,7 +223,8 @@ namespace HotelListing.API.Migrations
                             Id = "f6c2adbb-4f5f-8a05-e3a7-62b3adbb61d2",
                             AccessFailedCount = 0,
                             Age = 0,
-                            ConcurrencyStamp = "45a2170d-88ef-4ae5-b514-c03b7c314416",
+                            ConcurrencyStamp = "7a9bd72a-d616-4215-847a-7b80e0fb739a",
+                            Country = "Netherlands",
                             Email = "user@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "User",
@@ -223,9 +232,9 @@ namespace HotelListing.API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@LOCALHOST.COM",
                             NormalizedUserName = "USER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPShDQFQLxEOri/xnmx0tog7ROoZAdCeOpME8eDTK4OVwxiJtxRF/Tll2Dj7v1DL0w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMKd/l78Eddpnm+kxouWcXuQIhWOAlQh758YdmlaaAqJAjqM2H1dAORbb+43r6VD0w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d3b2a6f7-d294-4382-9c30-46567811f962",
+                            SecurityStamp = "394ec480-9dd2-46b3-acca-68e536142371",
                             TwoFactorEnabled = false,
                             UserName = "user@localhost.com"
                         });

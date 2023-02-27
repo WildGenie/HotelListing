@@ -8,7 +8,6 @@ public class HotelDbContext : IdentityDbContext<User>
 {
     public HotelDbContext(DbContextOptions options) : base(options)
     {
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

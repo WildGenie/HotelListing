@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace HotelListing.API.Configurations.Entities;
 
 /* SETTING ADMIN USER FOR SYSTEM 
---------------------------------------------------------------------*/
+------------------------------*/
 
 public class UserSeedConfig : IEntityTypeConfiguration<User>
 {
@@ -23,7 +23,8 @@ public class UserSeedConfig : IEntityTypeConfiguration<User>
                 NormalizedUserName = "ADMIN@LOCALHOST.COM",
                 FirstName = "System",
                 LastName = "Admin",
-                PasswordHash = hash.HashPassword(null, "P@ssword123!"),
+                Country = "Netherlands",
+                PasswordHash = hash.HashPassword(null, "P@ssW0rd123!"),
                 EmailConfirmed = true
             },
             new User
@@ -35,7 +36,8 @@ public class UserSeedConfig : IEntityTypeConfiguration<User>
                 NormalizedUserName = "USER@LOCALHOST.COM",
                 FirstName = "User",
                 LastName = "Test",
-                PasswordHash = hash.HashPassword(null, "P@ssword123!"),
+                Country = "Netherlands",
+                PasswordHash = hash.HashPassword(null, "P@ssW0rd123!"),
                 EmailConfirmed = true
             }
         );
