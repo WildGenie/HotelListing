@@ -1,8 +1,6 @@
 ﻿using HotelListing.API.Interfaces;
 using HotelListing.API.Models.User;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace HotelListing.API.Controllers
 {

@@ -3,11 +3,12 @@ using HotelListing.API.Data;
 using HotelListing.API.Interfaces;
 using HotelListing.API.Models.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HotelListing.API.Repository;
 
@@ -43,8 +44,7 @@ public class AuthRepo : IAuthRepo
         
         var newToken = await _userManager.GenerateUserTokenAsync(
             _user, _loginProvider, _refreshToken);
-        
-        var result = await _userManager.SetAuthenticationTokenAsync(
+        _ = await _userManager.SetAuthenticationTokenAsync(
             _user, _loginProvider, _refreshToken, newToken);
 
         return newToken;

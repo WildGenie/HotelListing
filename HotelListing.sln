@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelListing.API", "HotelLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelListing.MinimalAPI", "HotelListing.MinimalAPI\HotelListing.MinimalAPI.csproj", "{4D895CD6-3E12-42CC-8E8D-CF6363887236}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelListing.API.Data", "HotelListing.Data\HotelListing.API.Data.csproj", "{077403F6-1A58-4A07-8051-64A09799428D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelListing.API.Core", "HotelListing.API.Core\HotelListing.API.Core.csproj", "{66725EFC-6528-452B-BFC0-237F6DD8CD97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{4D895CD6-3E12-42CC-8E8D-CF6363887236}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D895CD6-3E12-42CC-8E8D-CF6363887236}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D895CD6-3E12-42CC-8E8D-CF6363887236}.Release|Any CPU.Build.0 = Release|Any CPU
+		{077403F6-1A58-4A07-8051-64A09799428D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{077403F6-1A58-4A07-8051-64A09799428D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{077403F6-1A58-4A07-8051-64A09799428D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{077403F6-1A58-4A07-8051-64A09799428D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66725EFC-6528-452B-BFC0-237F6DD8CD97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66725EFC-6528-452B-BFC0-237F6DD8CD97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66725EFC-6528-452B-BFC0-237F6DD8CD97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66725EFC-6528-452B-BFC0-237F6DD8CD97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
