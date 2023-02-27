@@ -1,18 +1,21 @@
 using HotelListing.API.Data;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
+using HotelListing.API.Middleware;
 using HotelListing.API.Configurations;
 using HotelListing.API.Interfaces;
 using HotelListing.API.Repository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using HotelListing.API.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Text;
+using System.Text.Json;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -148,7 +151,22 @@ builder.Services.AddResponseCaching(cach =>
     cach.UseCaseSensitivePaths = true;
 });
 
-// Add services to the container.
+/* API HEALTH CHECK SERVICES
+--------------------------*/
+//aspnetcore.healthchecks.sqlserver
+//efcore - microsoft.extensions.diagnostics.healthchecks.entityframework
+builder.Services.AddHealthChecks()
+    .AddCheck<HealthCheckApi>("Health Check Api",
+    failureStatus: HealthStatus.Degraded,
+    tags: new[]
+    {
+        "api"
+    })
+    .AddSqlServer(connectionString, tags: new[] { "database"} )
+    .AddDbContextCheck<HotelDbContext>(tags: new[] { "database" });
+
+/* ODATA ADDED TO CONTROLLERS
+---------------------------*/
 builder.Services.AddControllers().AddOData(data =>
 {
     data.Select().Filter().OrderBy();
@@ -164,13 +182,84 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-/* GLOBAL EXCEPTION HANDELING 
----------------------------*/
-app.UseMiddleware<ExceptionMiddleware>(); 
+/* HEALTH CHECK
+-------------*/
+app.MapHealthChecks("/healthApi", new HealthCheckOptions
+{
+    Predicate = healthcheck => healthcheck.Tags.Contains("api"),
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+        [HealthStatus.Degraded] = StatusCodes.Status200OK
+    },
+
+    ResponseWriter = WriteResponse
+});
+
+app.MapHealthChecks("/healthDb", new HealthCheckOptions
+{
+    Predicate = healthcheck => healthcheck.Tags.Contains("database"),
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+        [HealthStatus.Degraded] = StatusCodes.Status200OK
+    },
+
+    ResponseWriter = WriteResponse
+});
+
+/* CREATE JSON HEALTH REPORT STATUS 
+---------------------------------*/
+static Task WriteResponse(HttpContext context, HealthReport healthReport)
+{
+    context.Response.ContentType = "application.json; charset=utf-8";
+    var options = new JsonWriterOptions { Indented = true };
+
+    using var memoryStream = new MemoryStream();
+    using (var jsonWriter = new Utf8JsonWriter(memoryStream, options)) 
+    {
+        jsonWriter.WriteStartObject();
+        jsonWriter.WriteString("status", healthReport.Status.ToString());
+        jsonWriter.WriteStartObject("result");
+
+        foreach(var healthReportEntry in healthReport.Entries)
+        {
+            jsonWriter.WriteStartObject(healthReportEntry.Key);
+            jsonWriter.WriteString("status",
+                healthReportEntry.Value.Status.ToString());
+            jsonWriter.WriteString("description",
+                healthReportEntry.Value.Description);
+            jsonWriter.WriteStartObject("data");
+
+            foreach(var item in healthReportEntry.Value.Data)
+            {
+                jsonWriter.WritePropertyName(item.Key);
+
+                JsonSerializer.Serialize(jsonWriter, item.Value, item.Value?.GetType() ?? typeof(object));
+            }
+
+            jsonWriter.WriteEndObject();
+            jsonWriter.WriteEndObject();
+        }
+
+        jsonWriter.WriteEndObject();
+        jsonWriter.WriteEndObject();
+    }
+
+    return context.Response.WriteAsync(
+        Encoding.UTF8.GetString(memoryStream.ToArray()));
+}
 
 /* REQUEST LOGGING
 --------------------------------------*/
 app.UseSerilogRequestLogging();
+
+/* GLOBAL EXCEPTION HANDELING 
+---------------------------*/
+app.UseMiddleware<ExceptionMiddleware>(); 
+
 
 app.UseHttpsRedirection();
 
@@ -203,3 +292,19 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+class HealthCheckApi : IHealthCheck
+{
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        var isHealthy = true;
+
+        if(isHealthy)
+        {
+            return Task.FromResult(HealthCheckResult.Healthy("SYSTEM RUNNING SMOOTH"));
+        }
+
+        return Task.FromResult(new HealthCheckResult(context.Registration.FailureStatus, "OEPS THERE'S AN ERROR"));
+    }
+}
